@@ -1,0 +1,263 @@
+/* Hack4Justice - @Hackthegap - Ge Xiong - 12/1/2020
+This code was created for Hack the Gap purpose to provide a resource solution for distance learning during COVID. This is only a demo app and is not complete. 
+This project was done on code.org, see website @https://studio.code.org/projects/applab/CHU8gPenfGOpgoFFq58DYoMQwAWxO02gMAZk7bJPJzM */
+
+nextScreen("Mission",3);
+nextScreen("Navigation",10);
+
+//auto-intro screen switch
+function nextScreen(screenId, secs){
+  setTimeout(function(){
+    setScreen(screenId);
+  }, secs*1000); //miliseconds
+}
+//manual intro screen switch 
+onEvent("back1", "click", function( ) {
+	setScreen("Home");
+});
+onEvent("forward1", "click", function( ) {
+	setScreen("Mission");
+});
+onEvent("back2", "click", function( ) {
+	setScreen("Mission");
+});
+onEvent("forward2", "click", function( ) {
+	setScreen("Navigation");
+});
+onEvent("contact_button", "click", function( ) {
+	setScreen("Contact");
+});
+onEvent("goBack", "click", function( ) {
+	setScreen("Navigation");
+});
+
+
+//link to device rentals screen:
+onEvent("res_deviceRental", "click", function() {
+  setScreen("Device_Rental");
+});
+onEvent("electronics_photo", "click", function() {
+  setScreen("Device_Rental");
+});
+onEvent("device_link", "click", function( ) {
+  open("https://docs.google.com/spreadsheets/d/1J_3VYVHT4rQ1aw6oGkWmQFB8tu0XrPt3Xb8jwA1hy3A/edit?ts=5fcd4d95#gid=0");
+});
+onEvent("go1", "click", function() {
+  if (getText("device_dropdown") == "WiFi hotspots") {
+    setScreen("Wifi_Hotspot");
+  } else if (getText("device_dropdown") == "Open spaces") {
+    setScreen("Open_Space");
+  } else {
+    setScreen("Device_Rental");
+  }
+});
+onEvent("return_home1", "click", function() {
+	setScreen("Navigation");
+});
+
+
+//link to open space screen:
+onEvent("res_openSpace", "click", function() {
+  setScreen("Open_Space");
+});
+onEvent("openSpace_photo", "click", function() {
+  setScreen("Open_Space");
+});
+onEvent("space_listLink", "click", function() {
+  open("https://docs.google.com/spreadsheets/d/1A57HMlDec_n47_A3YMbcjn31xiq8qBaYULMzEaAWiQE/edit?ts=5fc418cf#gid=0");
+});
+onEvent("go2", "click", function() {
+  if (getText("space_dropdown") == "Device rental spaces") {
+    setScreen("Device_Rental");
+  } else if (getText("space_dropdown") == "WiFi hotspots") {
+    setScreen("Wifi_Hotspot");
+  } else {
+    setScreen("Open_Space");
+  }
+});
+onEvent("return_home2", "click", function( ) {
+	setScreen("Navigation");
+});
+
+
+//link to Wifi hotspot screen:
+onEvent("res_wifi", "click", function( ) {
+  setScreen("Wifi_Hotspot");
+});
+onEvent("wifi_photo", "click", function( ) {
+  setScreen("Wifi_Hotspot");
+});
+onEvent("location_icon", "click", function() {
+open("https://www.wifimap.io/3050-saint-paul-free-wifi/map");
+});
+onEvent("go3", "click", function() {
+  if (getText("wifi_dropdown") == "Device rental spaces") {
+    setScreen("Device_Rental");
+  } else if (getText("wifi_dropdown") == "Open spaces") {
+    setScreen("Open_Space");
+  } else {
+    setScreen("Wifi_Hotspot");
+  }
+});
+onEvent("return_home3", "click", function( ) {
+	setScreen("Navigation");
+});
+
+//Link to education news 
+onEvent("news", "click", function() {
+  open("https://www.twincities.com/news/education/");
+});
+
+
+//Contact us:
+setText("label6", "");
+onEvent("send", "click", function(){
+  var name = getText("text_input1");
+  var email = getText("text_input2");
+  var message = getText("feedback");
+  
+  if(message.length > 0 && containsNoLetter(message.toUpperCase())){
+   setText("feedback", "");
+   createRecord("Feedback",{Name:name, userId:getUserId(), Email:email, Feedback:message});
+  }
+  setText("label6", "Thank you! We will get back to you as soon as possible.");
+  console.log("Feedback sent!");
+});
+
+
+//link to chatroom screen:
+onEvent("chat_icon", "click", function( ) {
+  setScreen("Start_Chat");
+});
+onEvent("arrow_left", "click", function( ) {
+	setScreen("Navigation");
+});
+onEvent("arrow_right", "click", function( ) {
+	setScreen("UserName");
+});
+onEvent("startButton", "click", function() {
+  setScreen("UserName");
+});
+//return to navigation
+onEvent("return_icon", "click", function( ) {
+	setScreen("Navigation");
+});
+
+var userColor;
+var text = [];
+var userName; 
+var userId = getUserId();
+
+//Sets username
+onEvent("submit_button", "click", function() {
+  if (getText("userNameId") === "" || !containsNoLetter(getText("userNameId").toUpperCase())){
+    setText("userNameId","");
+    setProperty("userNameId","placeholder", "Invalid username");
+  }
+  else if(getText("userNameId").length <= 2){
+   setText("userNameId","");
+   setProperty("userNameId","placeholder", "Username too short");
+  }
+  else {
+    userName = getText("userNameId");
+    setScreen("colorTheme");
+  }
+});
+
+updateChat();
+
+/*
+When the user submits text, this event handler will take the value from the 
+text input box and create a chat log with it, then clears out the input box
+*/
+
+//send text via send button
+onEvent("sendButton", "click", function() {
+  var temp = getText("ChatInput");
+  if (temp == "" || !containsNoLetter(temp.toUpperCase()))
+   setProperty("ChatInput","placeholder","Type here...");
+  if(temp.length > 0 && containsNoLetter(temp.toUpperCase())){
+   setText("ChatInput", "");
+   createRecord("Chat Logs",{UserName:userName, userId:getUserId(), Chats: temp});
+  }
+});
+
+//Functions:
+function updateChat(){
+  onRecordEvent("Chat Logs", function(records,chatLog){
+    if(chatLog == 'create'){
+      console.log("Chat log updated");
+      if(records.UserName == userName && userId == records.userId){
+        add("You: " + records.Chats);
+        appendText();
+      }
+      else{
+        playSound("sound://category_bell/choose_background.mp3");
+        add(records.UserName + ": " + records.Chats);
+        appendText();
+      }
+    }   
+  }, false);
+}
+function add(temp){
+  appendItem(returnText(), temp);
+}
+function returnText(){
+  return text;
+}
+//Adds text to the text box, thus allowing the scroll bar
+function appendText(){
+  var temp = "";
+  setProperty("chat_box","text-color", userColor);
+  for(var i = 0; i < text.length; i++){
+   temp += text[i] + "\n";
+   setText("chat_box", temp);
+ }
+}
+function containsNoLetter(message){
+  var alphabets = ["A","B","C","D","E","F","G","H","I",
+  "J","K","L","M","N","O","P","Q","R","S","T",
+  "U","V","W","X",
+  "Y","Z"];
+  for (var i = 0; i < alphabets.length; i++){
+    if (message.includes(alphabets[i]))
+    return message.includes(alphabets[i]);
+  }
+  return false;
+}
+
+//Color theme data:
+//When the user chooses red as the preferred text color
+onEvent("red", "click", function() {
+  userColor = "red";
+  fadeOut(userColor);
+});
+//When the user chooses blue as the preferred text color
+onEvent("blue", "click", function() {
+  userColor = "blue";
+  fadeOut(userColor);
+});
+//When the user chooses green as preferred text color
+onEvent("green", "click", function() {
+  userColor = "green";
+  fadeOut(userColor);
+});
+//When user chooses purple as preferred text color
+onEvent("purple", "click", function() {
+  userColor = "purple";
+  fadeOut(userColor);
+});
+function fadeOut(color){
+//use split method to remove commas on the colorID string and put them into an array
+//Each value gets assigned RGB and then we can fade it out
+ var colorID = getProperty(color, "background-color");
+ colorID = colorID.substring(4,14);
+ var numbers = colorID.split(',');
+ var RGBvalues =[];
+ for (var i = 0; i < numbers.length; i++)
+  appendItem(RGBvalues, parseInt(numbers[i]));
+ setScreen("ChatRoom");
+}
+
+//Resources:
+//For the chatroom code. Retrieve on 12/1/20 from: https://studio.code.org/projects/applab/h-8pFe5qxObsl7B39o_lzA/view
