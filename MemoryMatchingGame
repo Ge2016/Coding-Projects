@@ -1,0 +1,157 @@
+/* Memory Matching Game - Ge Xiong - 6/24/21 
+ * Disclaimer: This is code was done with the Unity platform, using C#, therefore may not comply with other platform. This is a code of the project and is not the complete project codes, thus your project may not fully function. If you would like the full codes of this project, shoot me an email @ge.xiong.jobs@gmail.com
+ * All rights reserved. If you plan to use any content of the code, remember to credit the author to prevent unintended plagiarism. */
+
+using System.Collections;
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement; 
+
+public class GameController : MonoBehaviour
+{
+    [SerializeField]
+    private Sprite image;
+
+    public Sprite[] puzzles;
+    public List<Sprite> gamePuzzles = new List<Sprite>();
+    public List<Button> buttons = new List<Button>();
+    private bool firstGuess, secondGuess;
+    private int countGuess, countcorrectGuess, gameGuess, firstGuessIndex, secondGuessIndex;
+    private string firstGuessPuzzle, secondGuessPuzzle;
+
+    void Awake()
+    {
+        puzzles = Resources.LoadAll<Sprite>("Sprites/CS Images");
+    }
+
+   void Start()
+    {
+        GetButtons();
+        AddListeners();
+        AddGamePuzzles();
+        Shuffle(gamePuzzles);
+        gameGuess = gamePuzzles.Count / 2;
+    }
+
+    void GetButtons()
+    {
+        GameObject[] objects = GameObject.FindGameObjectsWithTag("PuzzleButton");
+
+        for(int i = 0; i < objects.Length; i++)
+        {
+            buttons.Add(objects[i].GetComponent<Button>());
+            buttons[i].image.sprite = image;
+        }
+    }
+
+    void AddListeners()
+    {
+        foreach(Button btn in buttons)
+        {
+            btn.onClick.AddListener(() => PickPuzzle());
+        }
+    }
+
+    public void PickPuzzle()
+    {
+        string name = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name;
+        if (!firstGuess)
+        {
+            firstGuess = true;
+            firstGuessIndex = int.Parse(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name);
+            firstGuessPuzzle = gamePuzzles[firstGuessIndex].name;
+            buttons[firstGuessIndex].image.sprite = gamePuzzles[firstGuessIndex];
+
+        } else if (!secondGuess)
+        {
+            secondGuess = true;
+            secondGuessIndex = int.Parse(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name);
+            secondGuessPuzzle = gamePuzzles[secondGuessIndex].name;
+            buttons[secondGuessIndex].image.sprite = gamePuzzles[secondGuessIndex];
+
+            countGuess++;
+            StartCoroutine(CheckForMatch());
+
+        }
+    }
+
+    IEnumerator CheckForMatch()
+    {
+        yield return new WaitForSeconds(1f); //waits 1 second 
+
+        if (firstGuessPuzzle == secondGuessPuzzle)
+        {
+            yield return new WaitForSeconds(.5f);
+
+            //if guessed correctly, can't touch correct buttons again
+            buttons[firstGuessIndex].interactable = false;
+            buttons[secondGuessIndex].interactable = false;
+
+            //hide buttons that were guessed correct
+            buttons[firstGuessIndex].image.color = new Color(0,0,0,0);
+            buttons[secondGuessIndex].image.color = new Color(0, 0, 0, 0);
+
+            //check if game is finish
+            CheckIfGameFinished(); 
+
+        } else
+        {
+            //while game is not finish yet, wait 
+            yield return new WaitForSeconds(.5f);
+
+            //revert images to inital image
+            buttons[firstGuessIndex].image.sprite = image; 
+            buttons[secondGuessIndex].image.sprite = image;
+        }
+
+        firstGuess = secondGuess = false;
+    }
+    
+    
+    void CheckIfGameFinished()
+    {
+        countcorrectGuess++;
+
+        //if game is finished, print done
+        if (countcorrectGuess == gameGuess)
+        {
+            Debug.Log("Game completed!");
+            SceneManager.LoadScene(2);
+        }
+    }
+
+    void AddGamePuzzles()
+    {
+        int looper = buttons.Count;
+        int index = 0;
+
+        for(int i = 0; i < looper; i++)
+        {
+            if (index == looper / 2)
+            {
+                index = 0;
+            }
+
+            gamePuzzles.Add(puzzles[index]);
+            index++;
+        }
+    }
+
+    //shuffles the images at random
+    void Shuffle(List<Sprite> list)
+    {
+        for(int i = 0; i < list.Count; i++)
+        {
+            Sprite temp = list[i];
+            int randomIndex = Random.Range(i, list.Count);
+            list[i] = list[randomIndex];
+            list[randomIndex] = temp;
+        }
+    }
+}
+
+/* Resources:
+ * Awesome Tuts. 2015, August 30. Unity Memory Game Tutorial [Video]. Retrieve on June 24, 2021 from https://www.youtube.com/watch?v=qaCjBh7bWz0&list=PLZhNP5qJ2IA2DA4bzDyxFMs8yogVQSrjW&index=1 */
