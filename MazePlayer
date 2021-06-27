@@ -1,5 +1,6 @@
-/* MAze Minigame - 6/16/21 
- * @author Ge Xiong */
+/* MAze Minigame - Ge Xiong - 6/16/21 
+ * Disclaimer: This is code was done with the Unity platform, using C#, therefore may not comply with other platform. This is a code of the project and is not the complete project codes, thus your project may not fully function. If you would like the full codes of this project, shoot me an email @ge.xiong.jobs@gmail.com
+ * All rights reserved. If you plan to use any content of the video/code, remember to credit the author to prevent unintended plagiarism. */
 
 using System.Collections;
 using System.Collections.Generic;
