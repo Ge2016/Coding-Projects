@@ -1,6 +1,5 @@
 /* Hack4Justice - @Hackthegap - Ge Xiong - 12/1/2020
- * Disclaimer: This code was created for Hack the Gap purpose to provide a resource solution for distance learning during COVID.
-This project was done on code.org, therefore may not comply with other platform. See the website here  @https://studio.code.org/projects/applab/CHU8gPenfGOpgoFFq58DYoMQwAWxO02gMAZk7bJPJzM 
+ * Disclaimer: This code was created for Hack the Gap purpose to provide a resource solution for distance learning during COVID. This project was done on code.org, therefore may not comply with other platform. See the website here  @https://studio.code.org/projects/applab/CHU8gPenfGOpgoFFq58DYoMQwAWxO02gMAZk7bJPJzM 
  * All rights reserved. If you plan to use any content of the code, remember to credit the author to prevent unintended plagiarism.*/
 
 nextScreen("Mission",3);
