@@ -1,0 +1,76 @@
+/* MAze Minigame - 6/16/21 
+ * @author Ge Xiong */
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class Player : MonoBehaviour
+{
+    float speed = 5.0f;
+
+    //creates player's movement per arrow-key strokes
+    void Update()
+    {
+        if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            transform.Translate(-speed * Time.deltaTime, 0, 0);
+        }
+        if (Input.GetKey(KeyCode.RightArrow))
+        {
+            transform.Translate(speed * Time.deltaTime, 0, 0);        
+        }
+        if (Input.GetKey(KeyCode.UpArrow))
+        {
+            transform.Translate(0, speed * Time.deltaTime, 0);         
+        }
+        if (Input.GetKey(KeyCode.DownArrow))
+        {
+            transform.Translate(0, -speed * Time.deltaTime, 0);      
+        }
+    }
+
+    //prevents walking through walls 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.tag == "Wall")
+        {
+            if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                transform.Translate(speed * Time.deltaTime, 0, 0);
+            }
+            if (Input.GetKey(KeyCode.RightArrow))
+            {
+                transform.Translate(-speed * Time.deltaTime, 0, 0);
+            }
+            if (Input.GetKey(KeyCode.UpArrow))
+            {
+                transform.Translate(0, -speed * Time.deltaTime, 0);
+            }
+            if (Input.GetKey(KeyCode.DownArrow))
+            {
+                transform.Translate(0, speed * Time.deltaTime, 0);
+            }
+        }
+    }
+
+   //when hits the door exit
+    private void OnTriggerEnter2D(Collider2D door)
+    {
+        //enter wrong room, load the fail scene
+        if (door.gameObject.tag == "door")
+        {
+            SceneManager.LoadScene(2);
+        }
+        //enter correct room, load win scene
+        if (door.gameObject.tag == "exit")
+        {
+            SceneManager.LoadScene(3);
+        }
+    }
+
+}
+
+/*Resources:
+ * Crow, Tanner. [Coding Club]. (2020, April 20). Unity 2D Maze Game Tutorial [Video]. Retrieve on June 16, 2021 from https://www.youtube.com/watch?v=yGidpBVWPx0 */
